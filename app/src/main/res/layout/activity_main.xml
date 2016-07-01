@@ -25,6 +25,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:id="@+id/default_textview"
+        android:textSize="16sp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter book title in above search box and click 'Search' button."/>
+
     <ListView
         android:id="@+id/books_listview"
         android:layout_width="match_parent"

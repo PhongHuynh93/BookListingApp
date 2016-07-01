@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivityLog";
 
     private ListView booksListView;
+    private TextView defaultTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         booksListView = (ListView) findViewById(R.id.books_listview);
+        defaultTextView = (TextView) findViewById(R.id.default_textview);
+
+        defaultTextView.setText("Enter book title in above search box and click 'Search' button.");
+        defaultTextView.setVisibility(View.VISIBLE);
 
         final EditText searchEditText = (EditText) findViewById(R.id.search_edit_text);
         final Button searchButton = (Button) findViewById(R.id.search_button);
@@ -42,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String searchTerm = searchEditText.getText().toString();
+                defaultTextView.setText("Searching for: '" + searchTerm + "' books.");
                 new SearchBooksTask().execute("https://www.googleapis.com/books/v1/volumes?q=" + searchTerm + "&maxResults=20");
             }
         });
@@ -106,7 +113,13 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    booksListView.setAdapter(new BooksAdapter(MainActivity.this, books));
+                    if (books.size() == 0) {
+                        defaultTextView.setText("No results found. Try another search term.");
+                        defaultTextView.setVisibility(View.VISIBLE);
+                    } else {
+                        defaultTextView.setVisibility(View.GONE);
+                        booksListView.setAdapter(new BooksAdapter(MainActivity.this, books));
+                    }
                 }
             });
         }
