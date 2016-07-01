@@ -48,8 +48,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String searchTerm = searchEditText.getText().toString();
-                defaultTextView.setText("Searching for: '" + searchTerm + "' books.");
-                new SearchBooksTask().execute("https://www.googleapis.com/books/v1/volumes?q=" + searchTerm + "&maxResults=20");
+                if (searchTerm.equals("")) {
+                    defaultTextView.setText("Please enter a search term.");
+                } else {
+                    defaultTextView.setText("Searching for: '" + searchTerm + "' books.");
+                    new SearchBooksTask().execute("https://www.googleapis.com/books/v1/volumes?q=" + searchTerm + "&maxResults=20");
+                }
             }
         });
     }
