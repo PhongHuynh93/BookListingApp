@@ -3,7 +3,9 @@ package com.atikur.booklistingapp;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import org.json.JSONArray;
@@ -32,7 +34,16 @@ public class MainActivity extends AppCompatActivity {
 
         booksListView = (ListView) findViewById(R.id.books_listview);
 
-        new SearchBooksTask().execute("https://www.googleapis.com/books/v1/volumes?q=android&maxResults=20");
+        final EditText searchEditText = (EditText) findViewById(R.id.search_edit_text);
+        final Button searchButton = (Button) findViewById(R.id.search_button);
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String searchTerm = searchEditText.getText().toString();
+                new SearchBooksTask().execute("https://www.googleapis.com/books/v1/volumes?q=" + searchTerm + "&maxResults=20");
+            }
+        });
     }
 
     private class SearchBooksTask extends AsyncTask<String, Void, String> {
