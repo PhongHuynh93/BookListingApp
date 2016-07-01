@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class SearchBooksTask extends AsyncTask<String, Void, String> {
 
-        ArrayList<String> books;
+        ArrayList<Book> books = new ArrayList<Book>();
 
         @Override
         protected void onPreExecute() {
@@ -62,17 +62,23 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < bookItems.length(); i++) {
                     JSONObject bookItem = bookItems.getJSONObject(i);
                     JSONObject voluemInfo = bookItem.getJSONObject("volumeInfo");
+
+                    // get title
                     String title = voluemInfo.getString("title");
 
+                    // get authors
                     JSONArray authorsObject = voluemInfo.getJSONArray("authors");
-                    String[] authorsArr = new String[authorsObject.length()];
-
+                    String[] authors = new String[authorsObject.length()];
                     for (int j = 0; j < authorsObject.length(); j++) {
-                        authorsArr[j] = authorsObject.getString(j);
+                        authors[j] = authorsObject.getString(j);
                     }
 
-                    Log.d(TAG, "Title: " + title + ", Author: " + authorsArr[0]);
+                    // create Book object
+                    Book book = new Book(title, authors);
+                    books.add(book);
                 }
+
+                Log.d(TAG, "Books added: " + books.size());
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
