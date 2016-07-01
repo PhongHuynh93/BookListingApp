@@ -3,6 +3,7 @@ package com.atikur.booklistingapp;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,35 +57,42 @@ public class MainActivity extends AppCompatActivity {
                 URL url = new URL(params[0]);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
-                InputStream stream = new BufferedInputStream(urlConnection.getInputStream());
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
-                StringBuilder builder = new StringBuilder();
+                if (urlConnection.getResponseCode() == 200) {
+                    InputStream stream = new BufferedInputStream(urlConnection.getInputStream());
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
+                    StringBuilder builder = new StringBuilder();
 
-                String inputString;
-                while ((inputString = bufferedReader.readLine()) != null) {
-                    builder.append(inputString);
-                }
-
-                JSONObject rootObject = new JSONObject(builder.toString());
-                JSONArray bookItems = rootObject.getJSONArray("items");
-
-                for (int i = 0; i < bookItems.length(); i++) {
-                    JSONObject bookItem = bookItems.getJSONObject(i);
-                    JSONObject voluemInfo = bookItem.getJSONObject("volumeInfo");
-
-                    // get title
-                    String title = voluemInfo.getString("title");
-
-                    // get authors
-                    JSONArray authorsObject = voluemInfo.getJSONArray("authors");
-                    String[] authors = new String[authorsObject.length()];
-                    for (int j = 0; j < authorsObject.length(); j++) {
-                        authors[j] = authorsObject.getString(j);
+                    String inputString;
+                    while ((inputString = bufferedReader.readLine()) != null) {
+                        builder.append(inputString);
                     }
 
-                    // create Book object
-                    Book book = new Book(title, authors);
-                    books.add(book);
+                    JSONObject rootObject = new JSONObject(builder.toString());
+                    JSONArray bookItems = rootObject.getJSONArray("items");
+
+                    for (int i = 0; i < bookItems.length(); i++) {
+                        JSONObject bookItem = bookItems.getJSONObject(i);
+                        JSONObject voluemInfo = bookItem.getJSONObject("volumeInfo");
+
+                        // get title
+                        String title = voluemInfo.getString("title");
+
+                        // get authors
+                        JSONArray authorsObject = voluemInfo.getJSONArray("authors");
+                        String[] authors = new String[authorsObject.length()];
+                        for (int j = 0; j < authorsObject.length(); j++) {
+                            authors[j] = authorsObject.getString(j);
+                        }
+
+                        // create Book object
+                        Book book = new Book(title, authors);
+                        books.add(book);
+
+                        urlConnection.disconnect();
+                    }
+                } else {
+                    Log.w(TAG, "Response Code: " + urlConnection.getResponseCode());
+                    urlConnection.disconnect();
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
