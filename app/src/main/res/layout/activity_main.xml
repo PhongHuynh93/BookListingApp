@@ -32,7 +32,7 @@
         android:paddingBottom="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enter book title in above search box and click 'Search' button."/>
+        android:text="@string/default_textview_text"/>
 
     <ListView
         android:id="@+id/books_listview"
