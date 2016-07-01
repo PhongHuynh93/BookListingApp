@@ -122,8 +122,8 @@ public class MainActivity extends AppCompatActivity {
                         defaultTextView.setVisibility(View.VISIBLE);
                     } else {
                         defaultTextView.setVisibility(View.GONE);
-                        booksListView.setAdapter(new BooksAdapter(MainActivity.this, books));
                     }
+                    booksListView.setAdapter(new BooksAdapter(MainActivity.this, books));
                 }
             });
         }
