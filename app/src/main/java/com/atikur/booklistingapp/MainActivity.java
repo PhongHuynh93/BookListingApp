@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,10 +23,14 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivityLog";
 
+    private ListView booksListView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        booksListView = (ListView) findViewById(R.id.books_listview);
 
         new SearchBooksTask().execute("https://www.googleapis.com/books/v1/volumes?q=android&maxResults=20");
     }
@@ -35,14 +40,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Book> books = new ArrayList<Book>();
 
         @Override
-        protected void onPreExecute() {
-            Log.d(TAG, "onPreExecute called.");
-        }
-
-        @Override
         protected String doInBackground(String... params) {
-            Log.d(TAG, "doing in background.");
-
             try {
                 URL url = new URL(params[0]);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -77,8 +75,6 @@ public class MainActivity extends AppCompatActivity {
                     Book book = new Book(title, authors);
                     books.add(book);
                 }
-
-                Log.d(TAG, "Books added: " + books.size());
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
@@ -88,7 +84,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            Log.d(TAG, "onPostExecute called.");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    booksListView.setAdapter(new BooksAdapter(MainActivity.this, books));
+                }
+            });
         }
     }
 }
